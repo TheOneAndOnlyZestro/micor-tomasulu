@@ -1,0 +1,5 @@
+{
+  "name": "Tomasulo Simulator",
+  "description": "A cycle-accurate simulator for the Tomasulo dynamic scheduling algorithm, featuring reservation stations, reorder buffers, cache simulation, and hazard visualization.",
+  "requestFramePermissions": []
+}
