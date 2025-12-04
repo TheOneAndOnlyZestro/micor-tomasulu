@@ -1,25 +1,26 @@
 export enum OpType {
-  LOAD = 'LOAD',
-  STORE = 'STORE',
-  ADD = 'ADD',
-  SUB = 'SUB',
-  MULT = 'MULT',
-  DIV = 'DIV',
-  BRANCH = 'BRANCH', // BNE, BEQ
+  LOAD = "LOAD",
+  STORE = "STORE",
+  ADD = "ADD",
+  SUB = "SUB",
+  MULT = "MULT",
+  DIV = "DIV",
+  INTEGER = "INTEGER", // ADDI, SUBI, DADDI
+  BRANCH = "BRANCH", // BNE, BEQ
 }
 
 export enum InstState {
-  PENDING = 'PENDING',
-  ISSUED = 'ISSUED',
-  EXECUTING = 'EXECUTING',
-  WRITING_RESULT = 'WRITING',
-  COMMIT = 'COMMIT',
+  PENDING = "PENDING",
+  ISSUED = "ISSUED",
+  EXECUTING = "EXECUTING",
+  WRITING_RESULT = "WRITING",
+  COMMIT = "COMMIT",
 }
 
 export interface InstructionConfig {
   op: OpType;
   cycles: number;
-  rsType: 'ADD' | 'MULT' | 'LOAD' | 'STORE';
+  rsType: "ADD" | "MULT" | "LOAD" | "STORE" | "INTEGER";
 }
 
 export interface SystemConfig {
@@ -28,6 +29,7 @@ export interface SystemConfig {
     MULT: number;
     LOAD: number;
     STORE: number;
+    INTEGER: number;
   };
   latencies: {
     [key in OpType]: number;
@@ -59,14 +61,14 @@ export interface InstructionLine {
 
 export interface ReservationStation {
   id: string;
-  type: 'ADD' | 'MULT' | 'LOAD' | 'STORE';
+  type: "ADD" | "MULT" | "LOAD" | "STORE" | "INTEGER";
   busy: boolean;
   op: string | null;
   vj: number | null;
   vk: number | null;
   qj: string | null; // tag of RS producing source 1
   qk: string | null; // tag of RS producing source 2
-  a: number | null;  // Address for load/store
+  a: number | null; // Address for load/store
   instId: number | null; // Reference to the instruction ID
   timeLeft: number;
   result: number | null;

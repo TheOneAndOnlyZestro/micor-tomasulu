@@ -1,4 +1,4 @@
-import { OpType, SystemConfig } from './types';
+import { OpType, SystemConfig } from "./types";
 
 export const DEFAULT_CONFIG: SystemConfig = {
   rsSizes: {
@@ -6,6 +6,7 @@ export const DEFAULT_CONFIG: SystemConfig = {
     MULT: 2,
     LOAD: 3,
     STORE: 3,
+    INTEGER: 3,
   },
   latencies: {
     [OpType.LOAD]: 2,
@@ -14,6 +15,7 @@ export const DEFAULT_CONFIG: SystemConfig = {
     [OpType.SUB]: 2,
     [OpType.MULT]: 10,
     [OpType.DIV]: 40,
+    [OpType.INTEGER]: 1,
     [OpType.BRANCH]: 1,
   },
   cache: {
@@ -27,8 +29,21 @@ export const DEFAULT_CONFIG: SystemConfig = {
 };
 
 export const INITIAL_REGISTERS = [
-  'F0', 'F2', 'F4', 'F6', 'F8', 'F10', 'F12', 'F14', 'F16', 'F18', 'F20',
-  'R1', 'R2', 'R3', 'R4'
+  "F0",
+  "F2",
+  "F4",
+  "F6",
+  "F8",
+  "F10",
+  "F12",
+  "F14",
+  "F16",
+  "F18",
+  "F20",
+  "R1",
+  "R2",
+  "R3",
+  "R4",
 ];
 
 export const SAMPLE_CODE_SEQUENTIAL = `L.D F6, 0(R2)

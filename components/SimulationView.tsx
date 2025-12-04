@@ -3,14 +3,21 @@ import { SimulationState, ReservationStation, Register } from "../types";
 
 interface Props {
   state: SimulationState;
+  onUpdateRegister?: (name: string, value: number) => void;
 }
 
-export const SimulationView: React.FC<Props> = ({ state }) => {
+export const SimulationView: React.FC<Props> = ({
+  state,
+  onUpdateRegister,
+}) => {
   const addStations = state.reservationStations.filter(
     (rs) => rs.type === "ADD"
   );
   const multStations = state.reservationStations.filter(
     (rs) => rs.type === "MULT"
+  );
+  const integerStations = state.reservationStations.filter(
+    (rs) => rs.type === "INTEGER"
   );
   const loadBuffers = state.reservationStations.filter(
     (rs) => rs.type === "LOAD"
@@ -110,19 +117,16 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
       </div>
 
       {/* Reservation Stations Area */}
-      <div className="col-span-1 xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="col-span-1 xl:col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {renderRSTable(addStations, "FP Adder RS", "text-green-400")}
+        {renderRSTable(multStations, "FP Mult/Div RS", "text-green-400")}
         {renderRSTable(
-          addStations,
-          "Reservation Stations (FP Add/Sub)",
-          "text-green-400"
-        )}
-        {renderRSTable(
-          multStations,
-          "Reservation Stations (FP Mult/Div)",
-          "text-green-400"
+          integerStations,
+          "Integer RS (Addr/Branch)",
+          "text-indigo-400"
         )}
 
-        {/* Load Buffers */}
+        {/* Load Buffers - Specific Columns */}
         <div className="bg-gray-800 p-4 rounded-lg shadow border border-gray-700">
           <h3 className="text-sm font-bold text-yellow-400 mb-2">
             Load Buffers
@@ -131,6 +135,7 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
             <table className="w-full text-xs text-left text-gray-300">
               <thead className="text-gray-400 uppercase bg-gray-700">
                 <tr>
+                  <th className="px-2 py-1">Time</th>
                   <th className="px-2 py-1">Name</th>
                   <th className="px-2 py-1">Busy</th>
                   <th className="px-2 py-1">Address</th>
@@ -142,6 +147,9 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
                     key={rs.id}
                     className="border-b border-gray-700 font-mono"
                   >
+                    <td className="px-2 py-1 text-yellow-500">
+                      {rs.busy ? rs.timeLeft : ""}
+                    </td>
                     <td className="px-2 py-1 font-bold">{rs.id}</td>
                     <td
                       className={`px-2 py-1 ${
@@ -150,7 +158,7 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
                     >
                       {rs.busy ? "Yes" : "No"}
                     </td>
-                    {/* For Load, address is typically calculated in 'a' field, or shows offset initially */}
+                    {/* Display 'a' which initially holds offset, then calculated address */}
                     <td className="px-2 py-1">
                       {rs.busy ? (rs.a !== null ? rs.a : "") : ""}
                     </td>
@@ -161,7 +169,7 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
           </div>
         </div>
 
-        {/* Store Buffers */}
+        {/* Store Buffers - Specific Columns: Busy, Address, V, Q */}
         <div className="bg-gray-800 p-4 rounded-lg shadow border border-gray-700">
           <h3 className="text-sm font-bold text-yellow-400 mb-2">
             Store Buffers
@@ -170,6 +178,7 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
             <table className="w-full text-xs text-left text-gray-300">
               <thead className="text-gray-400 uppercase bg-gray-700">
                 <tr>
+                  <th className="px-2 py-1">Time</th>
                   <th className="px-2 py-1">Name</th>
                   <th className="px-2 py-1">Busy</th>
                   <th className="px-2 py-1">Address</th>
@@ -183,6 +192,9 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
                     key={rs.id}
                     className="border-b border-gray-700 font-mono"
                   >
+                    <td className="px-2 py-1 text-yellow-500">
+                      {rs.busy ? rs.timeLeft : ""}
+                    </td>
                     <td className="px-2 py-1 font-bold">{rs.id}</td>
                     <td
                       className={`px-2 py-1 ${
@@ -194,7 +206,7 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
                     <td className="px-2 py-1">
                       {rs.busy ? (rs.a !== null ? rs.a : "") : ""}
                     </td>
-                    {/* For Store, the value to store is usually in Vk/Qk (Source 2/Dest reg) in standard Tomasulo */}
+                    {/* In Store RS, the value to store is typically in Vk (Src2) */}
                     <td className="px-2 py-1">
                       {rs.vk !== null ? rs.vk.toFixed(2) : ""}
                     </td>
@@ -213,6 +225,9 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
           <h3 className="text-lg font-bold text-purple-400 mb-2">
             Register File
           </h3>
+          <p className="text-xs text-gray-500 mb-2">
+            Cycle 0: Click values to edit.
+          </p>
           <div className="grid grid-cols-4 gap-2 h-48 overflow-y-auto">
             {Object.values(state.registers).map((reg: Register) => (
               <div
@@ -222,6 +237,18 @@ export const SimulationView: React.FC<Props> = ({ state }) => {
                 <div className="font-bold text-gray-400">{reg.name}</div>
                 {reg.qi ? (
                   <div className="text-blue-400 font-bold">Q: {reg.qi}</div>
+                ) : state.cycle === 0 && onUpdateRegister ? (
+                  <input
+                    type="number"
+                    className="w-full bg-gray-800 text-green-400 font-mono text-center border border-gray-600 rounded focus:outline-none focus:border-green-500"
+                    value={reg.value}
+                    onChange={(e) =>
+                      onUpdateRegister(
+                        reg.name,
+                        parseFloat(e.target.value) || 0
+                      )
+                    }
+                  />
                 ) : (
                   <div
                     className="text-green-400 truncate"
