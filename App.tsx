@@ -90,16 +90,16 @@ const App: React.FC = () => {
   };
 
   // Auto-scroll log
-  useEffect(() => {
-    const el = document.getElementById("log-end");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  }, [simState?.log]);
+  //   useEffect(() => {
+  //     const el = document.getElementById("log-end");
+  //     if (el) el.scrollIntoView({ behavior: "smooth" });
+  //   }, [simState?.log]);
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-gray-100 font-sans">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 bg-gray-800 border-b border-gray-700 shadow-md z-10">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-cexnter space-x-3">
           <div className="bg-blue-600 p-2 rounded-lg">
             <Settings className="w-6 h-6 text-white" />
           </div>
