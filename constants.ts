@@ -14,7 +14,7 @@ export const DEFAULT_CONFIG: SystemConfig = {
     [OpType.ADD]: 2,
     [OpType.SUB]: 2,
     [OpType.MULT]: 10,
-    [OpType.DIV]: 40,
+    [OpType.DIV]: 10,
     [OpType.INTEGER]: 1,
     [OpType.BRANCH]: 1,
   },
