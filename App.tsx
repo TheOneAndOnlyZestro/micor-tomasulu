@@ -104,7 +104,7 @@ const App: React.FC = () => {
             <Settings className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-xl font-bold tracking-tight">
-            Tomasulo Simulator
+            Tomasulo Simulator: Micro-Processor Project
           </h1>
         </div>
 
